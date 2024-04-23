@@ -1,7 +1,11 @@
+import { Header } from "./components/Header/Header";
+import { Info } from "./components/Info/Info";
+
 export function App() {
   return (
     <>
-      <h1>Hello world!</h1>
+      <Header />
+      <Info />
     </>
   );
 }

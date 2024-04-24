@@ -4,11 +4,14 @@ import { Info } from "./components/Info/Info";
 
 export function App() {
   const [inputValue, setInputValue] = useState("");
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
+  const [cityName, setCityName] = useState("");
 
   function handleButtonClick() {
-    callWeather(inputValue);
-    setInputValue("");
+    if (inputValue.trim !== "") {
+      callWeather(inputValue);
+      setInputValue("");
+    }
   }
 
   function handleChange(e) {
@@ -20,11 +23,13 @@ export function App() {
       `http://api.weatherapi.com/v1/current.json?key=2dd80bf3d57945faa57154500242404&q=${city}&aqi=no`
     )
       .then((res) => {
-        if (res.ok) {
-          return res.json();
+        if (!res.ok) {
+          throw new Error("Network error!");
         }
+        return res.json();
       })
-      .then((res) => console.log(res));
+      .then((data) => setData(data.current), setCityName(city))
+      .catch((err) => console.error("Data fetching error!", err));
   }
 
   return (
@@ -34,7 +39,13 @@ export function App() {
         onChange={handleChange}
         value={inputValue}
       />
-      <Info city={data} />
+      <Info
+        city={cityName}
+        pressure={data.pressure_mb}
+        temperature={data.temp_c}
+        wind={data.wind_kph}
+        clouds={data.cloud}
+      />
     </>
   );
 }
